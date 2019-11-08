@@ -92,6 +92,7 @@ class Node:
 
     def shutdown(self):
         self.discovering = False
+        self.discoverer.join()
         self.server.stop()
         self.advertiser.stop()
 

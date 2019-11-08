@@ -5,10 +5,12 @@ from time import sleep, time, ctime
 from socket import *
 
 class Server:
-    def __init__(self,port,functions,log=False):
+    def __init__(self,port,functions,inst=None,log=False):
         self.server = server.SimpleXMLRPCServer(('localhost',port),logRequests=log)
         for i in functions.keys():
             self.server.register_function(functions[i],i)
+        if inst:
+            self.server.register_instance(inst)
         self.server.register_introspection_functions()
     def start(self):
         self.thread = Thread(name='Server-instance',target=self.server.serve_forever)
@@ -47,10 +49,10 @@ class Advertiser:
         self.running = False
 
 class Node:
-    def __init__(self,serv_port,prot_port,name,protocol='itecnet',timer=3,**functions):
+    def __init__(self,serv_port,prot_port,name,protocol='itecnet',timer=3,inst=None,**functions):
         self.timer = timer
-        self.advertiser = Advertiser(name,serv_port,port=prot_port,timer=self.timer)
-        self.server = Server(serv_port,functions)
+        self.advertiser = Advertiser(name,serv_port,port=prot_port,timer=self.timer,prot=protocol)
+        self.server = Server(serv_port,functions,inst=inst)
         self.advertiser.start()
         self.server.start()
         self.protocol = protocol

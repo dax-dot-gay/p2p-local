@@ -74,7 +74,8 @@ class Node:
             data = str(data)[2:].strip("'")
             if data.startswith(self.protocol):
                 data = data.split('|')
-                ret[data[1]] = data[2]
+                if data[1] != self.advertiser.name:
+                    ret[data[1]] = data[2]
         
         if name:
             try:
